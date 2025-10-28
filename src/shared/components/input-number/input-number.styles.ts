@@ -14,7 +14,7 @@ export const InputNumberWrapper = styled.div`
 
 export const InputNumberBaseButton = styled.button`
   display: flex;
-  padding: 0.5rem;
+  padding: 0.75rem 0.5rem;
   color: ${(props) => props.theme.colors.purple};
   background: transparent;
   border-radius: 6px;
