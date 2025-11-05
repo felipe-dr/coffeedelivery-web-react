@@ -50,6 +50,7 @@ export const Button = styled.button<ButtonVariants>`
   ${({ variant }) => css`
     display: flex;
     align-items: center;
+    justify-content: center;
     column-gap: 0.25rem;
     text-transform: uppercase;
     border: 0;
