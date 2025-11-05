@@ -1,4 +1,5 @@
 import { MapPin } from 'phosphor-react'
+import { NavLink } from 'react-router-dom'
 
 import { CartWithBadgeComponent } from '../cart-with-badge/cart-with-badge.component'
 import {
@@ -13,12 +14,16 @@ export function HeaderComponent() {
   return (
     <Header>
       <HeaderContainer>
-        <Logo src="./svgs/logo.svg" alt="Coffee Delivery" />
+        <NavLink to="/">
+          <Logo src="./svgs/logo.svg" alt="Coffee Delivery" />
+        </NavLink>
         <HeaderActions>
           <Local>
             <MapPin weight="fill" /> Porto Alegre, RS
           </Local>
-          <CartWithBadgeComponent />
+          <NavLink to="/checkout">
+            <CartWithBadgeComponent />
+          </NavLink>
         </HeaderActions>
       </HeaderContainer>
     </Header>
