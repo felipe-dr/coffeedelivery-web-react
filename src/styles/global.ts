@@ -19,8 +19,16 @@ export const GlobalStyle = createGlobalStyle`
     font-size: 1rem;
   }
 
+  fieldset {
+    border: 0;
+  }
+
   ul {
     list-style: none;
+  }
+
+  img {
+    max-width: 100%;
   }
 
   :focus {
