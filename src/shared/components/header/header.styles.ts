@@ -32,4 +32,5 @@ export const Local = styled(Button).attrs({
   padding: 0.5rem;
   color: ${(props) => props.theme.colors.purpleDark};
   text-transform: initial;
+  background: ${(props) => props.theme.colors.purpleLight};
 `
