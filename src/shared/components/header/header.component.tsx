@@ -19,7 +19,7 @@ export function HeaderComponent() {
         </NavLink>
         <HeaderActions>
           <Local>
-            <MapPin weight="fill" /> Porto Alegre, RS
+            <MapPin size={22} weight="fill" /> Porto Alegre, RS
           </Local>
           <NavLink to="/checkout">
             <CartWithBadgeComponent />
