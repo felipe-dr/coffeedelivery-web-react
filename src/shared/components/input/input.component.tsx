@@ -1,15 +1,20 @@
-import { InputHTMLAttributes } from 'react'
+import { HTMLAttributes, InputHTMLAttributes } from 'react'
 
 import { Input, InputOptionalLabel, InputWrapper } from './input.styles'
 
 interface InputComponentProps extends InputHTMLAttributes<HTMLInputElement> {
   isOptional?: boolean
+  inputWrapperProps?: HTMLAttributes<HTMLDivElement>
 }
 
-export function InputComponent({ isOptional = false }: InputComponentProps) {
+export function InputComponent({
+  isOptional = false,
+  inputWrapperProps,
+  ...props
+}: InputComponentProps) {
   return (
-    <InputWrapper>
-      <Input type="text" />
+    <InputWrapper {...inputWrapperProps}>
+      <Input type="text" {...props} />
       {isOptional && <InputOptionalLabel>Opcional</InputOptionalLabel>}
     </InputWrapper>
   )
