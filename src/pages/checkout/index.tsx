@@ -1,35 +1,102 @@
-import { CurrencyDollar, MapPinLine } from 'phosphor-react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  Bank,
+  CreditCard,
+  CurrencyDollar,
+  MapPinLine,
+  Money,
+} from 'phosphor-react'
+import { useContext } from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import { useTheme } from 'styled-components'
+import { z } from 'zod'
 
-import { products } from '@/data/products.json'
-
+import { CartContext } from '@/contexts'
 import {
   ButtonComponent,
   CartProductComponent,
   InputComponent,
+  RadioComponent,
 } from '@/shared/components'
 
 import {
   CheckoutBox,
-  CheckoutSummaryBox,
   CheckoutContainer,
   CheckoutFieldset,
   CheckoutForm,
   CheckoutFormTitle,
   CheckoutHeader,
-  CheckoutSummaryTable,
-  CheckoutSummary,
   CheckoutOrder,
+  CheckoutPaymentMethod,
+  CheckoutPaymentMethodErrorMessage,
+  CheckoutSummary,
+  CheckoutSummaryBox,
+  CheckoutSummaryTable,
 } from './styles'
+
+type CheckoutFormType = {
+  postalCode: string
+  street: string
+  number: string
+  complement: string
+  neighborhood: string
+  city: string
+  state: string
+  paymentMethod: 'credit' | 'debit' | 'cash'
+}
+
+const checkoutFormSchema = z.object({
+  postalCode: z.string().min(7, 'Informe um CEP').max(7, 'Informe um CEP'),
+  street: z.string().min(1, 'Informe a rua'),
+  number: z.string().min(1, 'Informe o número'),
+  complement: z.string(),
+  neighborhood: z.string().min(1, 'Informe o bairro'),
+  city: z.string().min(1, 'Informe a cidade'),
+  state: z.string().min(1, 'Informe a UF'),
+  paymentMethod: z.enum(['credit', 'debit', 'cash'], {
+    invalid_type_error: 'Informe um método de pagamento',
+  }),
+})
 
 export default function CheckoutPage() {
   const theme = useTheme()
+
+  const { cart, getTotalItemsPriceFormatted, getTotalCartFormatted } =
+    useContext(CartContext)
+
+  const checkoutForm = useForm<z.infer<typeof checkoutFormSchema>>({
+    resolver: zodResolver(checkoutFormSchema),
+    defaultValues: {
+      postalCode: '',
+      street: '',
+      number: '',
+      complement: '',
+      neighborhood: '',
+      city: '',
+      state: '',
+      paymentMethod: undefined,
+    },
+  })
+
+  const {
+    handleSubmit,
+    register,
+    watch,
+    formState: { errors },
+  } = checkoutForm
+
+  const selectedPaymentMethod = watch('paymentMethod')
+
+  const handleCheckout: SubmitHandler<CheckoutFormType> = (data) => {
+    alert('OK')
+    console.log(data)
+  }
 
   return (
     <CheckoutContainer>
       <CheckoutOrder>
         <CheckoutFormTitle>Complete seu pedido</CheckoutFormTitle>
-        <CheckoutForm id="checkout">
+        <CheckoutForm id="checkout" onSubmit={handleSubmit(handleCheckout)}>
           <CheckoutBox>
             <CheckoutHeader>
               <MapPinLine size={20} color={theme.colors.yellowDark} />
@@ -40,40 +107,47 @@ export default function CheckoutPage() {
             </CheckoutHeader>
             <CheckoutFieldset>
               <InputComponent
-                name="postalCode"
                 placeholder="CEP"
+                error={errors.postalCode}
                 inputWrapperProps={{ style: { gridArea: 'cep' } }}
+                {...register('postalCode')}
               />
               <InputComponent
-                name="street"
                 placeholder="Rua"
                 inputWrapperProps={{ style: { gridArea: 'street' } }}
+                error={errors.street}
+                {...register('street')}
               />
               <InputComponent
-                name="number"
                 placeholder="Número"
                 inputWrapperProps={{ style: { gridArea: 'number' } }}
+                error={errors.number}
+                {...register('number')}
               />
               <InputComponent
-                name="complement"
                 placeholder="Complemento"
                 isOptional
                 inputWrapperProps={{ style: { gridArea: 'complement' } }}
+                {...register('complement')}
               />
               <InputComponent
-                name="neighborhood"
                 placeholder="Bairro"
                 inputWrapperProps={{ style: { gridArea: 'neighborhood' } }}
+                error={errors.neighborhood}
+                {...register('neighborhood')}
               />
               <InputComponent
-                name="city"
                 placeholder="Cidade"
                 inputWrapperProps={{ style: { gridArea: 'city' } }}
+                error={errors.city}
+                {...register('city')}
               />
               <InputComponent
-                name="state"
                 placeholder="UF"
+                maxLength={2}
                 inputWrapperProps={{ style: { gridArea: 'state' } }}
+                error={errors.state}
+                {...register('state')}
               />
             </CheckoutFieldset>
           </CheckoutBox>
@@ -88,20 +162,58 @@ export default function CheckoutPage() {
                 </p>
               </div>
             </CheckoutHeader>
+            <div>
+              <CheckoutPaymentMethod>
+                <RadioComponent
+                  isSelected={selectedPaymentMethod === 'credit'}
+                  {...register('paymentMethod')}
+                  value="credit"
+                >
+                  <CreditCard size={16} />
+                  <span>Cartão de crédito</span>
+                </RadioComponent>
+                <RadioComponent
+                  isSelected={selectedPaymentMethod === 'debit'}
+                  {...register('paymentMethod')}
+                  value="debit"
+                >
+                  <Bank size={16} />
+                  <span>Cartão de débito</span>
+                </RadioComponent>
+                <RadioComponent
+                  isSelected={selectedPaymentMethod === 'cash'}
+                  {...register('paymentMethod')}
+                  value="cash"
+                >
+                  <Money size={16} />
+                  <span>Dinheiro</span>
+                </RadioComponent>
+              </CheckoutPaymentMethod>
+              {errors.paymentMethod && (
+                <CheckoutPaymentMethodErrorMessage role="alert">
+                  {errors.paymentMethod.message}
+                </CheckoutPaymentMethodErrorMessage>
+              )}
+            </div>
           </CheckoutBox>
         </CheckoutForm>
       </CheckoutOrder>
       <CheckoutSummary>
         <CheckoutFormTitle>Cafés selecionados</CheckoutFormTitle>
         <CheckoutSummaryBox>
-          <CartProductComponent product={products[0]} />
-          <CartProductComponent product={products[2]} />
+          {cart.map((item) => (
+            <CartProductComponent key={item.id} product={item} />
+          ))}
           <CheckoutSummaryTable>
             <caption>Resumo do pedido</caption>
             <tbody>
               <tr>
                 <th scope="row">Total de itens</th>
-                <td>R$ 250,00</td>
+                <td>
+                  <data value={getTotalItemsPriceFormatted()}>
+                    R$ {getTotalItemsPriceFormatted()}
+                  </data>
+                </td>
               </tr>
               <tr>
                 <th scope="row">Entrega</th>
@@ -112,7 +224,11 @@ export default function CheckoutPage() {
               <tr>
                 <th scope="row">Total</th>
                 <td>
-                  <strong>R$ 275,00</strong>
+                  <strong>
+                    <data value={getTotalCartFormatted()}>
+                      R$ {getTotalCartFormatted()}
+                    </data>
+                  </strong>
                 </td>
               </tr>
             </tfoot>
