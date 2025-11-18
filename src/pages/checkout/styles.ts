@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 
 import { Container } from '@/shared/components/container/container.styles'
+import { InputErrorMesage } from '@/shared/components/input/input.styles'
 
 export const CheckoutContainer = styled(Container)`
   display: flex;
@@ -57,8 +58,22 @@ export const CheckoutFieldset = styled.fieldset`
     'number complement complement'
     'neighborhood city state';
   grid-template-columns: 12.5rem 1fr 3.75rem;
+  align-items: start;
   grid-gap: 1rem 0.75rem;
 `
+
+export const CheckoutPaymentMethod = styled.div`
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+
+  & > label {
+    max-width: 178px;
+  }
+`
+
+export const CheckoutPaymentMethodErrorMessage = styled(InputErrorMesage)``
+
 export const CheckoutSummary = styled.aside`
   width: 100%;
   max-width: 28rem;
