@@ -11,6 +11,7 @@ export const Header = styled.header`
 
 export const HeaderContainer = styled(Container)`
   display: flex;
+  gap: 0.5rem;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
