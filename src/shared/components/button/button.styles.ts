@@ -60,4 +60,9 @@ export const Button = styled.button<ButtonVariants>`
 
     ${!!variant && buttonModifiers[variant]};
   `}
+
+  :disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
 `
