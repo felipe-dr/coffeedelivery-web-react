@@ -1,4 +1,7 @@
+import { CartContext } from '@/contexts'
+import { Item } from '@/reducers'
 import { Trash } from 'phosphor-react'
+import { useContext, useEffect, useState } from 'react'
 
 import { ButtonComponent } from '../button/button.component'
 import { InputNumberComponent } from '../input-number/input-number.component'
@@ -17,6 +20,21 @@ type CartProductComponentProps = {
 }
 
 export function CartProductComponent({ product }: CartProductComponentProps) {
+  const { cart, removeItem } = useContext(CartContext)
+  const [itemAlreadyAdded, setItemAlreadyAdded] = useState<Item>()
+
+  const handleRemoveItemFromCart = () => {
+    removeItem(product.id)
+  }
+
+  useEffect(() => {
+    const itemFound = cart.find((item) => item.id === product.id)
+
+    if (itemFound) {
+      setItemAlreadyAdded(itemFound)
+    }
+  }, [cart, product.id])
+
   return (
     <CartProductWrapper>
       <CartProductImage src={product.image} alt={product.title} />
@@ -27,8 +45,11 @@ export function CartProductComponent({ product }: CartProductComponentProps) {
         </CartProductPrice>
       </CartProductHeader>
       <CartProductFooter>
-        <InputNumberComponent />
-        <ButtonComponent variant="secondary">
+        <InputNumberComponent
+          itemId={product.id}
+          value={itemAlreadyAdded?.quantity || 0}
+        />
+        <ButtonComponent variant="secondary" onClick={handleRemoveItemFromCart}>
           <Trash size="16" />
           Remover
         </ButtonComponent>
